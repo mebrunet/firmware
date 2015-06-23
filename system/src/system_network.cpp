@@ -242,6 +242,7 @@ const WLanConfig* network_config(network_handle_t network, uint32_t param, void*
 
 typedef void (*network_fn_t)(network_handle_t network, uint32_t flags, uint32_t param, void* reserved);
 
+#if PLATFORM_THREADING
 struct NetworkParams {
 
     struct NetworkParamsInner {
@@ -316,6 +317,9 @@ struct NetworkParams {
         SystemThread.invoke(NetworkParams::invoke, pointer); \
         return; \
     }
+#else
+    #define NETWORK_ASYNC(fn, network, flags, param, reserved)
+#endif
 
 void network_connect(network_handle_t network, uint32_t flags, uint32_t param, void* reserved)
 {

@@ -120,27 +120,24 @@ bool spark_connected(void)
 
 void spark_connect(void)
 {
-    SYSTEM_THREAD_CONTEXT();
-
-    //Schedule Spark's cloud connection and handshake
-    SPARK_WLAN_SLEEP = 0;
+    //Schedule cloud connection and handshake
     SPARK_CLOUD_CONNECT = 1;
+    SPARK_WLAN_SLEEP = 0;
 }
 
 void spark_disconnect(void)
 {
-    SYSTEM_THREAD_CONTEXT();
-
-    //Schedule Spark's cloud disconnection
     SPARK_CLOUD_CONNECT = 0;
 }
 
 void spark_process(void)
 {
-    if (SystemThread.isCurrentThread()) {
-        // run the background processing loop, and specifically also pump cloud events
-        Spark_Idle_Events(true);
-    }
+    if (!SYSTEM_THREAD_CURRENT())
+        return;
+
+    // run the background processing loop, and specifically also pump cloud events
+    Spark_Idle_Events(true);
+
 }
 
 #endif
